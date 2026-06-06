@@ -1,0 +1,4 @@
+bisakah hasil generate shortlink  hanya menghasilkan total 4 karakter angka dan huruf ?
+dan untuk awal peluncuran  saya ingin user non member bisa generate QR code
+buat semua link dan QR Code untuk user non member berlaku selama 30 dan hari dan ada ajakan untuk menjadi member agar link bisa bertahan 90 hari tetapi saat setelah daftar member, member free plan tidak bisa custom link dan jumlah link dibatasi 3 
+kau paham?
