@@ -6,39 +6,51 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './prisma';
 import { compare } from 'bcryptjs';
 
-export const authConfig = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+const providers: NextAuthConfig['providers'] = [
+  Credentials({
+    credentials: {
+      email: { label: 'Email', type: 'email' },
+      password: { label: 'Password', type: 'password' }
+    },
+    async authorize(credentials) {
+      if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string }
-        });
+      const user = await prisma.user.findUnique({
+        where: { email: credentials.email as string }
+      });
 
-        if (!user || !user.password) return null;
-        if (!user.emailVerified) return null;
+      if (!user || !user.password) return null;
+      if (!user.emailVerified) return null;
 
-        const isValid = await compare(credentials.password as string, user.password);
-        if (!isValid) return null;
+      const isValid = await compare(credentials.password as string, user.password);
+      if (!isValid) return null;
 
-        return { id: user.id, email: user.email, name: user.name, image: user.image };
-      }
-    }),
+      return { id: user.id, email: user.email, name: user.name, image: user.image };
+    }
+  })
+];
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    }),
+    })
+  );
+}
+
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  providers.push(
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET
     })
-  ],
+  );
+}
+
+export const authConfig = {
+  adapter: PrismaAdapter(prisma),
+  providers,
   callbacks: {
     async jwt({ token, user }) {
       if (user?.id) {
