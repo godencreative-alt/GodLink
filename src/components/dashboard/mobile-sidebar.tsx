@@ -9,12 +9,25 @@ import { signOut } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/components/providers/app-provider';
 
-export function MobileSidebar({ user }: { user: { name?: string | null; email?: string | null; role?: string } }) {
+interface MobileSidebarProps {
+  user: { name?: string | null; email?: string | null; role?: string };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
+}
+
+export function MobileSidebar({ user, open: controlledOpen, onOpenChange, hideTrigger }: MobileSidebarProps) {
   const { locale, setLocale, theme, setTheme } = useApp();
   const id = locale === 'id';
   const pathname = usePathname();
   const isAdmin = user.role === 'ADMIN';
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (v: boolean) => {
+    if (!isControlled) setInternalOpen(v);
+    onOpenChange?.(v);
+  };
 
   const userNav = [
     { href: '/dashboard/links', label: id ? 'Tautan' : 'Links', icon: Link2 },
@@ -34,13 +47,15 @@ export function MobileSidebar({ user }: { user: { name?: string | null; email?: 
 
   return (
     <div className="lg:hidden">
-      <button
-        onClick={() => setOpen(true)}
-        aria-label="Open navigation"
-        className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-muted-foreground hover:border-primary/40 hover:text-primary"
-      >
-        <Menu className="h-4 w-4" />
-      </button>
+      {!hideTrigger && (
+        <button
+          onClick={() => setOpen(true)}
+          aria-label="Open navigation"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 text-muted-foreground hover:border-primary/40 hover:text-primary"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      )}
 
       <AnimatePresence>
         {open && (
@@ -82,13 +97,13 @@ export function MobileSidebar({ user }: { user: { name?: string | null; email?: 
                     href={href}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+                      'flex min-h-[48px] items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all',
                       pathname === href
                         ? 'bg-primary/10 text-primary'
                         : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
                     )}
                   >
-                    <Icon className="h-4 w-4" /> {label}
+                    <Icon className="h-5 w-5" /> {label}
                   </Link>
                 ))}
 
@@ -101,20 +116,20 @@ export function MobileSidebar({ user }: { user: { name?: string | null; email?: 
                         href={href}
                         onClick={() => setOpen(false)}
                         className={cn(
-                          'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+                          'flex min-h-[48px] items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all',
                           pathname === href || (href !== '/dashboard/admin' && pathname.startsWith(href))
                             ? 'bg-primary/10 text-primary'
                             : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
                         )}
                       >
-                        <Icon className="h-4 w-4" /> {label}
+                        <Icon className="h-5 w-5" /> {label}
                       </Link>
                     ))}
                   </>
                 )}
               </nav>
 
-              <div className="border-t border-white/10 p-4 space-y-3">
+              <div className="border-t border-white/10 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] space-y-3">
                 <div className="rounded-xl bg-white/[0.03] p-3">
                   <p className="truncate text-sm font-medium">{user.name || (id ? 'Pengguna' : 'User')}</p>
                   <p className="truncate text-xs text-muted-foreground">{user.email}</p>

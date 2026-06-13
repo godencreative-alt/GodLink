@@ -142,11 +142,11 @@ export function Navbar({ siteName = 'godl.ink', siteTagline = 'by Goden Creative
 
           {!isDashboard && (
             <button
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 md:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 md:hidden"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5" />
             </button>
           )}
         </div>
@@ -159,7 +159,7 @@ export function Navbar({ siteName = 'godl.ink', siteTagline = 'by Goden Creative
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25 }}
-            className="fixed inset-0 z-50 flex flex-col bg-background p-6"
+            className="fixed inset-0 z-50 flex flex-col bg-background p-6 pt-[max(1.5rem,env(safe-area-inset-top))]"
           >
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center gap-3" onClick={() => setMobileOpen(false)}>
@@ -168,7 +168,7 @@ export function Navbar({ siteName = 'godl.ink', siteTagline = 'by Goden Creative
                 </div>
                 <p className="font-bold">{siteName}</p>
               </Link>
-              <button onClick={() => setMobileOpen(false)}>
+              <button onClick={() => setMobileOpen(false)} className="flex h-11 w-11 items-center justify-center rounded-lg" aria-label="Close menu">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -178,34 +178,34 @@ export function Navbar({ siteName = 'godl.ink', siteTagline = 'by Goden Creative
                   key={href}
                   href={href}
                   onClick={() => setMobileOpen(false)}
-                  className="rounded-xl px-4 py-3 text-lg font-medium hover:bg-white/5"
+                  className="rounded-xl px-4 py-4 text-lg font-medium hover:bg-white/5 min-h-[48px] flex items-center"
                 >
                   {label}
                 </Link>
               ))}
             </nav>
-            <div className="mt-auto flex flex-col gap-3">
+            <div className="mt-auto flex flex-col gap-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div className="flex gap-3">
                 <button
                   onClick={() => setLocale(locale === 'en' ? 'id' : 'en')}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 py-3 text-sm"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 py-3.5 text-sm min-h-[48px]"
                 >
                   <Globe className="h-4 w-4" /> {locale === 'en' ? 'Indonesia' : 'English'}
                 </button>
                 <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 py-3 text-sm"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 py-3.5 text-sm min-h-[48px]"
                 >
                   {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                   {theme === 'dark' ? nav.light : nav.dark}
                 </button>
               </div>
               {session ? (
-                <Button onClick={() => signOut({ callbackUrl: '/' })}>{nav.logout.toUpperCase()}</Button>
+                <Button onClick={() => signOut({ callbackUrl: '/' })} className="h-12">{nav.logout.toUpperCase()}</Button>
               ) : (
                 <>
-                  <Button asChild variant="outline"><Link href="/auth/login" onClick={() => setMobileOpen(false)}>{nav.login.toUpperCase()}</Link></Button>
-                  <Button asChild><Link href="/auth/register" onClick={() => setMobileOpen(false)}>{nav.register.toUpperCase()}</Link></Button>
+                  <Button asChild variant="outline" className="h-12"><Link href="/auth/login" onClick={() => setMobileOpen(false)}>{nav.login.toUpperCase()}</Link></Button>
+                  <Button asChild className="h-12"><Link href="/auth/register" onClick={() => setMobileOpen(false)}>{nav.register.toUpperCase()}</Link></Button>
                 </>
               )}
             </div>

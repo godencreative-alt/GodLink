@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Instrument_Serif } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { Toaster } from 'sonner';
@@ -10,6 +10,13 @@ import { AdsBanner, AdsHeaderScript } from '@/components/ads/ads-banner';
 import '@/styles/globals.css';
 
 export const dynamic = 'force-dynamic';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#0a0a0a'
+};
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const serif = Instrument_Serif({
